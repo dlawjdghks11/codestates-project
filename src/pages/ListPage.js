@@ -44,7 +44,6 @@ function ListPage(){
         getAlbumData()
         .then((data) => setAlbums(data))
     },[])
-    console.log(albums)
     
     return (
         <div>
