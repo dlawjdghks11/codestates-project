@@ -8,13 +8,6 @@ const AlbumContent = () => {
 	const [currentImage, setCurrentImage] = useState(0);
 	const [isViewerOpen, setIsViewerOpen] = useState(false);
 
-	const images = [
-		"http://placeimg.com/1200/800/nature",
-		"http://placeimg.com/800/1200/nature",
-		"http://placeimg.com/1920/1080/nature",
-		"http://placeimg.com/1500/500/nature",
-	];
-
 	const requestdata = async () => {
 		try {
 			const imagedata = await axios.get(
@@ -27,7 +20,6 @@ const AlbumContent = () => {
 	useEffect(() => {
 		getdata.then(data => {
 			setContent(data.data);
-			console.log(data.data);
 		});
 	}, []);
 
@@ -43,7 +35,7 @@ const AlbumContent = () => {
 
 	return (
 		<Container>
-			{content.slice(0).map((el, index) => {
+			{content.map((el, index) => {
 				return (
 					<ContentContainer key={index}>
 						<img
@@ -58,7 +50,7 @@ const AlbumContent = () => {
 			})}
 			{isViewerOpen && (
 				<ImageViewer
-					src={content}
+					src={content.map(el => el.url)}
 					currentIndex={currentImage}
 					disableScroll={false}
 					closeOnClickOutside={true}
