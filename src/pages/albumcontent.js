@@ -1,12 +1,14 @@
 import styled from "styled-components";
 import React, { useState, useEffect } from "react";
 import axios from 'axios'
+import { useParams } from "react-router-dom";
 
 const AlbumContent = () => {
+  let params = useParams()
   const [content, setContent] = useState([])
   const requestdata = async () => {
     try{
-    const imagedata = await axios.get('https://jsonplaceholder.typicode.com/photos?albumId=2')
+    const imagedata = await axios.get(`https://jsonplaceholder.typicode.com/photos?albumId=${params.id}`)
     return imagedata
     }
     catch (err) {}

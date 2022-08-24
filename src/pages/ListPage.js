@@ -43,7 +43,6 @@ const AlbumNameContainer = styled.div`
 function ListPage(){
     const [albums, setAlbums] = useState([])
     const navigate = useNavigate();
-
     const getAlbumData = async () => {
         const res = await axios.get('https://jsonplaceholder.typicode.com/albums');
         return res.data;
@@ -64,8 +63,9 @@ function ListPage(){
                         title: album.title
                     }
                     /** 더블클릭시 상세페이지로 이동 */
-                    const onDbClickImg = () => {
-                        navigate('/photos/:id');
+                    const onDbClickImg = (e) => {
+                        const id = e
+                        navigate(`/photos/${data.id}`);
                         console.log(data)
                     }
                     return (
