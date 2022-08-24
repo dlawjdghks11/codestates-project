@@ -1,67 +1,14 @@
 import styled from "styled-components";
-<<<<<<< HEAD
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 import ImageViewer from "react-simple-image-viewer";
 
 const AlbumContent = () => {
+	let params = useParams();
 	const [content, setContent] = useState([]);
 	const [currentImage, setCurrentImage] = useState(0);
 	const [isViewerOpen, setIsViewerOpen] = useState(false);
-=======
-import React, { useState, useEffect } from "react";
-import axios from 'axios'
-import { useParams } from "react-router-dom";
-
-const AlbumContent = () => {
-  let params = useParams()
-  const [content, setContent] = useState([])
-  const requestdata = async () => {
-    try{
-    const imagedata = await axios.get(`https://jsonplaceholder.typicode.com/photos?albumId=${params.id}`)
-    return imagedata
-    }
-    catch (err) {}
-  }
-  const getdata = requestdata()
-  useEffect(() => {
-    getdata.then((data) => {
-      setContent(data.data)
-    })
-  }, []);
-
-
-  return(
-    <Container>
-      {content.slice(0).map((el) => {
-        return(
-          <ContentContainer key={el.id} >
-            <img src={el.thumbnailUrl} />
-            <span>{el.title}</span>
-          </ContentContainer>
-        )
-      })}
-    </Container>
-  );
-}
-
-export default AlbumContent
->>>>>>> 4d6a97c0b3da1bc8ef624304500ab0675aeba109
-
-	const requestdata = async () => {
-		try {
-			const imagedata = await axios.get(
-				"https://jsonplaceholder.typicode.com/photos?albumId=2"
-			);
-			return imagedata;
-		} catch (err) {}
-	};
-	const getdata = requestdata();
-	useEffect(() => {
-		getdata.then(data => {
-			setContent(data.data);
-		});
-	}, []);
 
 	const openImageViewer = useCallback(index => {
 		setCurrentImage(index);
@@ -73,9 +20,24 @@ export default AlbumContent
 		setIsViewerOpen(false);
 	};
 
+	const requestdata = async () => {
+		try {
+			const imagedata = await axios.get(
+				`https://jsonplaceholder.typicode.com/photos?albumId=${params.id}`
+			);
+			return imagedata;
+		} catch (err) {}
+	};
+	const getdata = requestdata();
+	useEffect(() => {
+		getdata.then(data => {
+			setContent(data.data);
+		});
+	}, []);
+
 	return (
 		<Container>
-			{content.map((el, index) => {
+			{content.slice(0).map((el, index) => {
 				return (
 					<ContentContainer key={index}>
 						<img
@@ -88,6 +50,7 @@ export default AlbumContent
 					</ContentContainer>
 				);
 			})}
+
 			{isViewerOpen && (
 				<ImageViewer
 					src={content.map(el => el.url)}
