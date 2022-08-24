@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import folder from "../images/folder-open-solid.svg"
 
@@ -12,32 +13,39 @@ const Container = styled.div`
     flex-wrap: wrap;
 `;
 
-const IconContainer = styled.div`
+const IconContainer = styled.button`
     width: 80px;
     height: 140px;
+    border: 0;
+    outline: 0;
+    background-color: white;
+    &:focus {
+        border: 2px solid deepskyblue;
+    }
 `;
 
 const ImageContainer = styled.img`
     width: 60px;
     height: 60px;
-    border: 1px solid white;
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-left: auto;
+    margin-right: auto;
 `;
 const AlbumNameContainer = styled.div`
-    width: 80px;
+    width: 70px;
     height: 80px;
-    border: 1px solid white;
     text-align: center;
     font-size: 10px;
     font-weight: bold;
+    margin-left: auto;
+    margin-right: auto;
 `;
 
 function ListPage(){
     const [albums, setAlbums] = useState([])
-    const getAlbumData = () => {
-        return axios.get('https://jsonplaceholder.typicode.com/albums')
-        .then(res => res.data)
+    const navigate = useNavigate();
+    const getAlbumData = async () => {
+        const res = await axios.get('https://jsonplaceholder.typicode.com/albums');
+        return res.data;
     }
 
     useEffect(() => {
@@ -48,11 +56,22 @@ function ListPage(){
     return (
         <div>
             <Container>
-                {albums.map((image) => {
+                {albums.map((album) => {
+                    const data = {
+                        id: album.id,
+                        userId: album.userId,
+                        title: album.title
+                    }
+                    /** 더블클릭시 상세페이지로 이동 */
+                    const onDbClickImg = (e) => {
+                        const id = e
+                        navigate(`/photos/${data.id}`);
+                        console.log(data)
+                    }
                     return (
-                        <IconContainer>
+                        <IconContainer key={album.id} onDoubleClick={onDbClickImg}>
                             <ImageContainer src={folder}/>
-                            <AlbumNameContainer>{image.title}</AlbumNameContainer>
+                            <AlbumNameContainer>{album.title}</AlbumNameContainer>
                         </IconContainer>
                     )
                 })}
