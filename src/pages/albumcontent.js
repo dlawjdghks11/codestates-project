@@ -1,56 +1,85 @@
 import styled from "styled-components";
-import React, { useState, useEffect } from "react";
-import axios from 'axios'
+import React, { useState, useEffect, useCallback } from "react";
+import axios from "axios";
 import { useParams } from "react-router-dom";
+import ImageViewer from "react-simple-image-viewer";
 
 const AlbumContent = () => {
-  let params = useParams()
-  const [content, setContent] = useState([])
-  const requestdata = async () => {
-    try{
-    const imagedata = await axios.get(`https://jsonplaceholder.typicode.com/photos?albumId=${params.id}`)
-    return imagedata
-    }
-    catch (err) {}
-  }
-  const getdata = requestdata()
-  useEffect(() => {
-    getdata.then((data) => {
-      setContent(data.data)
-    })
-  }, []);
+	let params = useParams();
+	const [content, setContent] = useState([]);
+	const [currentImage, setCurrentImage] = useState(0);
+	const [isViewerOpen, setIsViewerOpen] = useState(false);
 
+	const openImageViewer = useCallback(index => {
+		setCurrentImage(index);
+		setIsViewerOpen(true);
+	}, []);
 
-  return(
-    <Container>
-      {content.slice(0).map((el) => {
-        return(
-          <ContentContainer key={el.id} >
-            <img src={el.thumbnailUrl} />
-            <span>{el.title}</span>
-          </ContentContainer>
-        )
-      })}
-    </Container>
-  );
-}
+	const closeImageViewer = () => {
+		setCurrentImage(0);
+		setIsViewerOpen(false);
+	};
 
-export default AlbumContent
+	const requestdata = async () => {
+		try {
+			const imagedata = await axios.get(
+				`https://jsonplaceholder.typicode.com/photos?albumId=${params.id}`
+			);
+			return imagedata;
+		} catch (err) {}
+	};
+	const getdata = requestdata();
+	useEffect(() => {
+		getdata.then(data => {
+			setContent(data.data);
+		});
+	}, []);
 
+	return (
+		<Container>
+			{content.slice(0).map((el, index) => {
+				return (
+					<ContentContainer key={index}>
+						<img
+							src={el.thumbnailUrl}
+							key={index}
+							onClick={() => openImageViewer(index)}
+							alt=""
+						/>
+						<span>{el.title}</span>
+					</ContentContainer>
+				);
+			})}
+
+			{isViewerOpen && (
+				<ImageViewer
+					src={content.map(el => el.url)}
+					currentIndex={currentImage}
+					disableScroll={false}
+					closeOnClickOutside={true}
+					onClose={closeImageViewer}
+					backgroundStyle={{
+						backgroundColor: "rgba(0,0,0,0.9)",
+					}}
+				/>
+			)}
+		</Container>
+	);
+};
+
+export default AlbumContent;
 
 const Container = styled.div`
-  width: 100vw;
-  height: 100vh;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-
-`
+	width: 100vw;
+	height: 100vh;
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+`;
 
 const ContentContainer = styled.div`
-  width: 8vw;
-  height: 10vh;
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
-
-`
+	width: 8vw;
+	height: 10vh;
+	display: flex;
+	flex-direction: column;
+	padding: 1rem;
+`;
